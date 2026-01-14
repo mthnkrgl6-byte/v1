@@ -139,13 +139,14 @@
               <img src="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&fit=crop&w=800&q=80" alt="Eğitim videosu" />
               <button class="nav-arrow left">‹</button>
               <button class="nav-arrow right">›</button>
-              <button class="quiz-button">Quiz Başlat</button>
+              <button class="quiz-button" id="quiz-start" disabled>Quiz Başlat</button>
+              <button class="complete-button" id="video-complete">Videoyu Tamamla</button>
             </div>
             <aside class="detail-panel">
               <div class="progress-block">
-                <span class="progress-label">İlerleme: %0</span>
+                <span class="progress-label" id="progress-label">İlerleme: %0</span>
                 <div class="progress-bar">
-                  <div class="progress-fill"></div>
+                  <div class="progress-fill" id="progress-fill"></div>
                 </div>
               </div>
               <div class="quiz-status">
@@ -162,6 +163,36 @@
               <button class="certificate-button">Sertifikanız</button>
               <span class="certificate-status">Henüz Sertifika Alamadınız</span>
             </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-quiz">
+        <div class="quiz-screen">
+          <div class="detail-header">
+            <button class="back-button" id="back-to-detail">←</button>
+            <h2 id="quiz-title">Quiz : PPRC Boru ve Ek Parçaları Teknik Bilgiler</h2>
+          </div>
+          <div class="quiz-body">
+            <div class="quiz-question">
+              <h3>1. Soru : PPRC boru ham maddesi nedir?</h3>
+              <div class="quiz-options">
+                <label><input type="radio" name="q1" /> A. Polipropilen Random Kopolimer</label>
+                <label><input type="radio" name="q1" /> B. Polipropilen Regular Kopolimer</label>
+                <label><input type="radio" name="q1" /> C. Polivinil Random Klorür</label>
+                <label><input type="radio" name="q1" /> D. Polivinil Klorür</label>
+              </div>
+            </div>
+            <div class="quiz-question">
+              <h3>2. Soru : PPRC boru ham maddesi nedir?</h3>
+              <div class="quiz-options">
+                <label><input type="radio" name="q2" /> A. Polipropilen Random Kopolimer</label>
+                <label><input type="radio" name="q2" /> B. Polipropilen Regular Kopolimer</label>
+                <label><input type="radio" name="q2" /> C. Polivinil Random Klorür</label>
+                <label><input type="radio" name="q2" /> D. Polivinil Klorür</label>
+              </div>
+            </div>
+            <button class="quiz-submit">Sınavı Bitir</button>
           </div>
         </div>
       </section>

@@ -6,6 +6,12 @@ const trainingList = document.getElementById("training-list");
 const trainingDetail = document.getElementById("training-detail");
 const trainingTitle = document.getElementById("training-title");
 const backToList = document.getElementById("back-to-list");
+const quizStart = document.getElementById("quiz-start");
+const videoComplete = document.getElementById("video-complete");
+const progressLabel = document.getElementById("progress-label");
+const progressFill = document.getElementById("progress-fill");
+const quizTitle = document.getElementById("quiz-title");
+const backToDetail = document.getElementById("back-to-detail");
 
 const activateTab = (name) => {
   tabs.forEach((tab) => {
@@ -32,14 +38,46 @@ joinButtons.forEach((button) => {
     if (trainingTitle) {
       trainingTitle.textContent = button.dataset.title || "Eğitim Detayı";
     }
+    if (quizTitle) {
+      quizTitle.textContent = `Quiz : ${button.dataset.title || "Eğitim Detayı"}`;
+    }
     trainingList?.classList.remove("is-active");
     trainingDetail?.classList.add("is-active");
+    quizStart?.setAttribute("disabled", "disabled");
+    if (progressLabel) {
+      progressLabel.textContent = "İlerleme: %0";
+    }
+    if (progressFill) {
+      progressFill.style.width = "0%";
+    }
   });
 });
 
 backToList?.addEventListener("click", () => {
   trainingDetail?.classList.remove("is-active");
   trainingList?.classList.add("is-active");
+});
+
+videoComplete?.addEventListener("click", () => {
+  quizStart?.removeAttribute("disabled");
+  if (progressLabel) {
+    progressLabel.textContent = "İlerleme: %100";
+  }
+  if (progressFill) {
+    progressFill.style.width = "100%";
+  }
+});
+
+quizStart?.addEventListener("click", () => {
+  if (!quizStart.hasAttribute("disabled")) {
+    activateTab("quiz");
+  }
+});
+
+backToDetail?.addEventListener("click", () => {
+  activateTab("all");
+  trainingList?.classList.remove("is-active");
+  trainingDetail?.classList.add("is-active");
 });
 
 activateTab("all");
