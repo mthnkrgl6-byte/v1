@@ -263,8 +263,8 @@
           <h2>Eğitim Düzenleme Paneli</h2>
           <p>Her eğitim için video, quiz ve sertifika içerikleri ayrı yönetilir.</p>
           <div class="admin-toolbar">
-            <button class="cta">Yeni Eğitim Ekle</button>
-            <button class="cta outline">Tümünü Kaydet</button>
+            <button class="cta" id="add-training">Yeni Eğitim Ekle</button>
+            <button class="cta outline" id="save-all">Tümünü Kaydet</button>
           </div>
         </div>
         <div class="admin-grid">
@@ -275,31 +275,38 @@
             </div>
             <div class="admin-section">
               <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: PPRC Boru Montajı" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form video-form">
+                <label>Video Başlığı<input type="text" placeholder="Örn: PPRC Boru Montajı" /></label>
+                <label>Video Dosyası<input type="file" /></label>
+                <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
+                <div class="admin-actions">
+                  <button class="cta add-video">Video Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list video-list"></div>
             </div>
             <div class="admin-section">
               <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form quiz-form">
+                <label>Soru<input type="text" placeholder="Soru metni" /></label>
+                <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
+                <div class="admin-actions">
+                  <button class="cta add-quiz">Soru Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list quiz-list"></div>
             </div>
             <div class="admin-section">
               <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
+              <label>Sertifika Şablonu<input type="file" class="certificate-input" /></label>
+              <span class="certificate-name">Şablon seçilmedi</span>
               <button class="cta">Sertifika Oluştur</button>
             </div>
             <div class="admin-footer">
               <button class="cta outline">Eğitimi Sil</button>
-              <button class="cta">Kaydet</button>
+              <button class="cta save-training">Kaydet</button>
             </div>
           </article>
           <article class="admin-column">
@@ -309,31 +316,38 @@
             </div>
             <div class="admin-section">
               <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: Montaj Adımları" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form video-form">
+                <label>Video Başlığı<input type="text" placeholder="Örn: Montaj Adımları" /></label>
+                <label>Video Dosyası<input type="file" /></label>
+                <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
+                <div class="admin-actions">
+                  <button class="cta add-video">Video Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list video-list"></div>
             </div>
             <div class="admin-section">
               <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form quiz-form">
+                <label>Soru<input type="text" placeholder="Soru metni" /></label>
+                <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
+                <div class="admin-actions">
+                  <button class="cta add-quiz">Soru Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list quiz-list"></div>
             </div>
             <div class="admin-section">
               <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
+              <label>Sertifika Şablonu<input type="file" class="certificate-input" /></label>
+              <span class="certificate-name">Şablon seçilmedi</span>
               <button class="cta">Sertifika Oluştur</button>
             </div>
             <div class="admin-footer">
               <button class="cta outline">Eğitimi Sil</button>
-              <button class="cta">Kaydet</button>
+              <button class="cta save-training">Kaydet</button>
             </div>
           </article>
           <article class="admin-column">
@@ -343,31 +357,38 @@
             </div>
             <div class="admin-section">
               <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: Kesim ve Birleştirme" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form video-form">
+                <label>Video Başlığı<input type="text" placeholder="Örn: Kesim ve Birleştirme" /></label>
+                <label>Video Dosyası<input type="file" /></label>
+                <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
+                <div class="admin-actions">
+                  <button class="cta add-video">Video Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list video-list"></div>
             </div>
             <div class="admin-section">
               <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form quiz-form">
+                <label>Soru<input type="text" placeholder="Soru metni" /></label>
+                <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
+                <div class="admin-actions">
+                  <button class="cta add-quiz">Soru Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list quiz-list"></div>
             </div>
             <div class="admin-section">
               <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
+              <label>Sertifika Şablonu<input type="file" class="certificate-input" /></label>
+              <span class="certificate-name">Şablon seçilmedi</span>
               <button class="cta">Sertifika Oluştur</button>
             </div>
             <div class="admin-footer">
               <button class="cta outline">Eğitimi Sil</button>
-              <button class="cta">Kaydet</button>
+              <button class="cta save-training">Kaydet</button>
             </div>
           </article>
           <article class="admin-column">
@@ -377,31 +398,38 @@
             </div>
             <div class="admin-section">
               <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: Sessiz Boru Testi" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form video-form">
+                <label>Video Başlığı<input type="text" placeholder="Örn: Sessiz Boru Testi" /></label>
+                <label>Video Dosyası<input type="file" /></label>
+                <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
+                <div class="admin-actions">
+                  <button class="cta add-video">Video Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list video-list"></div>
             </div>
             <div class="admin-section">
               <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
+              <div class="admin-form quiz-form">
+                <label>Soru<input type="text" placeholder="Soru metni" /></label>
+                <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
+                <div class="admin-actions">
+                  <button class="cta add-quiz">Soru Ekle</button>
+                  <button class="cta outline">Sil</button>
+                </div>
               </div>
+              <div class="admin-list quiz-list"></div>
             </div>
             <div class="admin-section">
               <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
+              <label>Sertifika Şablonu<input type="file" class="certificate-input" /></label>
+              <span class="certificate-name">Şablon seçilmedi</span>
               <button class="cta">Sertifika Oluştur</button>
             </div>
             <div class="admin-footer">
               <button class="cta outline">Eğitimi Sil</button>
-              <button class="cta">Kaydet</button>
+              <button class="cta save-training">Kaydet</button>
             </div>
           </article>
         </div>
