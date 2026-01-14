@@ -558,6 +558,13 @@ body {
   gap: 20px;
 }
 
+.admin-toolbar {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .admin-column {
   background: #fff;
   border: 1px solid var(--border);
@@ -617,6 +624,13 @@ body {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.admin-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
 }
 
 .panel {
