@@ -594,6 +594,19 @@ body {
   gap: 10px;
 }
 
+.preview-image {
+  width: 100%;
+  border-radius: 12px;
+  max-height: 140px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.admin-empty {
+  font-size: 12px;
+  color: var(--muted);
+}
+
 .admin-form {
   display: flex;
   flex-direction: column;

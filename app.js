@@ -91,6 +91,14 @@ const syncAdminColumns = () => {
     const training = trainings[index];
     if (training) {
       column.dataset.trainingId = training.id;
+      const previewImage = column.querySelector(".preview-image");
+      const previewUrl = column.querySelector(".preview-url");
+      if (previewImage && training.image) {
+        previewImage.src = training.image;
+      }
+      if (previewUrl && training.image) {
+        previewUrl.value = training.image;
+      }
     }
   });
 };
@@ -136,6 +144,7 @@ const updateTrainingTitle = (column) => {
   const trainingId = column.dataset.trainingId;
   const headerTitle = column.querySelector(".admin-header h3");
   const headerCategory = column.querySelector(".admin-header span");
+  const previewImage = column.querySelector(".preview-image");
   const training = trainings.find((item) => item.id === trainingId);
   if (training && headerTitle) {
     training.title = headerTitle.textContent.trim();
@@ -143,6 +152,9 @@ const updateTrainingTitle = (column) => {
   }
   if (training && headerCategory) {
     training.subtitle = headerCategory.textContent.trim() || training.subtitle;
+  }
+  if (training && previewImage) {
+    training.image = previewImage.src;
   }
 };
 
@@ -233,6 +245,12 @@ const createTrainingColumn = (title = "Yeni Eğitim", category = "Diğer") => {
       <span contenteditable="true">${category}</span>
     </div>
     <div class="admin-section">
+      <h4>Eğitim Önizleme</h4>
+      <img class="preview-image" src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80" alt="Eğitim önizleme" />
+      <label>Önizleme Görsel URL<input type="text" class="preview-url" placeholder="https://..." /></label>
+      <label>Önizleme Görseli Yükle<input type="file" class="preview-input" accept="image/*" /></label>
+    </div>
+    <div class="admin-section">
       <h4>Video Yönetimi</h4>
       <div class="admin-form video-form">
         <label>Video Başlığı<input type="text" placeholder="Örn: Eğitim Başlığı" /></label>
@@ -280,6 +298,7 @@ const handleVideoAdd = (column) => {
   const fileName = fileInput?.files?.[0]?.name || "Dosya seçilmedi";
   const list = column.querySelector(".video-list");
   if (list) {
+    list.querySelector(".admin-empty")?.remove();
     list.appendChild(createAdminItem(title, `${fileName} · ${note}`));
   }
   if (titleInput) titleInput.value = "";
@@ -295,6 +314,7 @@ const handleQuizAdd = (column) => {
   const answer = answerInput?.value.trim() || "Cevap girilmedi";
   const list = column.querySelector(".quiz-list");
   if (list) {
+    list.querySelector(".admin-empty")?.remove();
     list.appendChild(createAdminItem(question, `Doğru: ${answer}`));
   }
   if (questionInput) questionInput.value = "";
@@ -348,6 +368,30 @@ adminGrid?.addEventListener("change", (event) => {
     const label = column?.querySelector(".certificate-name");
     if (label) {
       label.textContent = name;
+    }
+  }
+  if (target.classList.contains("preview-input")) {
+    const column = target.closest(".admin-column");
+    const file = target.files?.[0];
+    const preview = column?.querySelector(".preview-image");
+    if (file && preview) {
+      preview.src = URL.createObjectURL(file);
+      updateTrainingTitle(column);
+      renderTrainingCards();
+    }
+  }
+});
+
+adminGrid?.addEventListener("input", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  if (target.classList.contains("preview-url")) {
+    const column = target.closest(".admin-column");
+    const preview = column?.querySelector(".preview-image");
+    if (preview && target.value.trim()) {
+      preview.src = target.value.trim();
+      updateTrainingTitle(column);
+      renderTrainingCards();
     }
   }
 });
