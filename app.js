@@ -1,7 +1,7 @@
 const tabs = document.querySelectorAll(".tab");
 const navItems = document.querySelectorAll(".nav-item");
 const panels = document.querySelectorAll(".tab-panel");
-const joinButtons = document.querySelectorAll(".join-training");
+const cardsContainer = document.querySelector(".cards");
 const trainingList = document.getElementById("training-list");
 const trainingDetail = document.getElementById("training-detail");
 const trainingTitle = document.getElementById("training-title");
@@ -20,6 +20,9 @@ toast.className = "toast";
 toast.textContent = "Değişiklikler kaydedildi.";
 document.body.appendChild(toast);
 
+const trainings = [];
+let trainingCounter = 0;
+
 const activateTab = (name) => {
   tabs.forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.tab === name);
@@ -36,29 +39,141 @@ const activateTab = (name) => {
   }
 };
 
+const attachJoinHandlers = () => {
+  document.querySelectorAll(".join-training").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (trainingTitle) {
+        trainingTitle.textContent = button.dataset.title || "Eğitim Detayı";
+      }
+      if (quizTitle) {
+        quizTitle.textContent = `Quiz : ${button.dataset.title || "Eğitim Detayı"}`;
+      }
+      trainingList?.classList.remove("is-active");
+      trainingDetail?.classList.add("is-active");
+      quizStart?.setAttribute("disabled", "disabled");
+      if (progressLabel) {
+        progressLabel.textContent = "İlerleme: %0";
+      }
+      if (progressFill) {
+        progressFill.style.width = "0%";
+      }
+    });
+  });
+};
+
+const renderTrainingCards = () => {
+  if (!cardsContainer) return;
+  cardsContainer.innerHTML = trainings
+    .map((training) => {
+      const statusClass = training.statusClass ? `status ${training.statusClass}` : "status";
+      return `
+        <article class="card" data-training-id="${training.id}">
+          <div class="card-image">
+            <img src="${training.image}" alt="${training.title}" />
+          </div>
+          <h3>${training.title}</h3>
+          <p>${training.subtitle}</p>
+          <button class="cta join-training" data-title="${training.detailTitle}">Eğitime Katıl</button>
+          <div class="progress">
+            <span>${training.progress}</span>
+            <span class="${statusClass}">${training.status}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+  attachJoinHandlers();
+};
+
+const syncAdminColumns = () => {
+  const adminColumns = document.querySelectorAll(".admin-column");
+  adminColumns.forEach((column, index) => {
+    const training = trainings[index];
+    if (training) {
+      column.dataset.trainingId = training.id;
+    }
+  });
+};
+
+const initializeTrainings = () => {
+  document.querySelectorAll(".card").forEach((card) => {
+    const title = card.querySelector("h3")?.textContent?.trim() || "Yeni Eğitim";
+    const subtitle = card.querySelector("p")?.textContent?.trim() || "Teknik bilgiler";
+    const progress = card.querySelector(".progress span")?.textContent?.trim() || "İlerleme: %0";
+    const statusElement = card.querySelector(".status");
+    const status = statusElement?.textContent?.trim() || "Başarı";
+    const statusClass = statusElement?.classList.contains("success")
+      ? "success"
+      : statusElement?.classList.contains("warning")
+        ? "warning"
+        : "";
+    const image = card.querySelector("img")?.getAttribute("src") || "";
+    const id = `training-${trainingCounter += 1}`;
+    trainings.push({
+      id,
+      title,
+      subtitle,
+      progress,
+      status,
+      statusClass,
+      image,
+      detailTitle: `${title} Teknik Bilgiler`,
+    });
+  });
+  renderTrainingCards();
+  syncAdminColumns();
+};
+
 [...tabs, ...navItems].forEach((tab) => {
   tab.addEventListener("click", () => activateTab(tab.dataset.tab));
 });
 
-joinButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (trainingTitle) {
-      trainingTitle.textContent = button.dataset.title || "Eğitim Detayı";
-    }
-    if (quizTitle) {
-      quizTitle.textContent = `Quiz : ${button.dataset.title || "Eğitim Detayı"}`;
-    }
-    trainingList?.classList.remove("is-active");
-    trainingDetail?.classList.add("is-active");
-    quizStart?.setAttribute("disabled", "disabled");
-    if (progressLabel) {
-      progressLabel.textContent = "İlerleme: %0";
-    }
-    if (progressFill) {
-      progressFill.style.width = "0%";
-    }
+attachJoinHandlers();
+
+initializeTrainings();
+
+const updateTrainingTitle = (column) => {
+  const trainingId = column.dataset.trainingId;
+  const headerTitle = column.querySelector(".admin-header h3");
+  const headerCategory = column.querySelector(".admin-header span");
+  const training = trainings.find((item) => item.id === trainingId);
+  if (training && headerTitle) {
+    training.title = headerTitle.textContent.trim();
+    training.detailTitle = `${training.title} Teknik Bilgiler`;
+  }
+  if (training && headerCategory) {
+    training.subtitle = headerCategory.textContent.trim() || training.subtitle;
+  }
+};
+
+const addTraining = () => {
+  trainingCounter += 1;
+  const id = `training-${trainingCounter}`;
+  trainings.push({
+    id,
+    title: "Yeni Eğitim",
+    subtitle: "Diğer",
+    progress: "İlerleme: %0",
+    status: "Başarı",
+    statusClass: "",
+    image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80",
+    detailTitle: "Yeni Eğitim Teknik Bilgiler",
   });
-});
+  if (adminGrid) {
+    const column = createTrainingColumn();
+    column.dataset.trainingId = id;
+    adminGrid.appendChild(column);
+  }
+  renderTrainingCards();
+};
+
+const removeTraining = (trainingId) => {
+  const index = trainings.findIndex((item) => item.id === trainingId);
+  if (index >= 0) {
+    trainings.splice(index, 1);
+  }
+  renderTrainingCards();
+};
 
 backToList?.addEventListener("click", () => {
   trainingDetail?.classList.remove("is-active");
@@ -187,10 +302,8 @@ const handleQuizAdd = (column) => {
 };
 
 addTrainingButton?.addEventListener("click", () => {
-  if (adminGrid) {
-    adminGrid.appendChild(createTrainingColumn());
-    showToast("Yeni eğitim eklendi.");
-  }
+  addTraining();
+  showToast("Yeni eğitim eklendi.");
 });
 
 saveAllButton?.addEventListener("click", () => {
@@ -212,10 +325,16 @@ adminGrid?.addEventListener("click", (event) => {
   }
   if (target.classList.contains("save-training")) {
     event.preventDefault();
+    updateTrainingTitle(column);
+    renderTrainingCards();
     showToast("Eğitim kaydedildi.");
   }
   if (target.textContent === "Eğitimi Sil") {
+    const trainingId = column.dataset.trainingId;
     column.remove();
+    if (trainingId) {
+      removeTraining(trainingId);
+    }
     showToast("Eğitim silindi.");
   }
 });
