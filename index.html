@@ -78,56 +78,8 @@
 
       <section class="tab-panel is-active" id="tab-all">
         <div class="training-list is-active" id="training-list">
-          <div class="cards">
-            <article class="card">
-            <div class="card-image">
-              <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=400&q=80" alt="PPRC" />
-            </div>
-            <h3>PPRC Boru ve Ek Parçaları</h3>
-            <p>Teknik bilgiler</p>
-            <button class="cta join-training" data-title="PPRC Boru ve Ek Parçaları Teknik Bilgiler">Eğitime Katıl</button>
-            <div class="progress">
-              <span>İlerleme: %0</span>
-              <span class="status">Başarı</span>
-            </div>
-            </article>
-            <article class="card">
-            <div class="card-image">
-              <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=400&q=80" alt="Isıtma" />
-            </div>
-            <h3>Yerden Isıtma Sistemleri</h3>
-            <p>Teknik bilgiler</p>
-            <button class="cta join-training" data-title="Yerden Isıtma Sistemleri Teknik Bilgiler">Eğitime Katıl</button>
-            <div class="progress">
-              <span>İlerleme: %10</span>
-              <span class="status warning">Devam Ediyor</span>
-            </div>
-            </article>
-            <article class="card">
-            <div class="card-image">
-              <img src="https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=400&q=80" alt="PVC" />
-            </div>
-            <h3>PVC Boru ve Ek Parçaları</h3>
-            <p>Teknik bilgiler</p>
-            <button class="cta join-training" data-title="PVC Boru ve Ek Parçaları Teknik Bilgiler">Eğitime Katıl</button>
-            <div class="progress">
-              <span>İlerleme: %100</span>
-              <span class="status success">Tamamlandı</span>
-            </div>
-            </article>
-            <article class="card">
-            <div class="card-image">
-              <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=400&q=80" alt="Sessiz Boru" />
-            </div>
-            <h3>3K Sessiz Boru Teknik Bilgiler</h3>
-            <p>Teknik bilgiler</p>
-            <button class="cta join-training" data-title="3K Sessiz Boru Teknik Bilgiler">Eğitime Katıl</button>
-            <div class="progress">
-              <span>İlerleme: %100</span>
-              <span class="status success">Tamamlandı</span>
-            </div>
-            </article>
-          </div>
+          <div class="cards"></div>
+          <p class="admin-empty">Henüz eğitim eklenmedi.</p>
         </div>
         <div class="training-detail" id="training-detail">
           <div class="detail-header">
@@ -262,129 +214,13 @@
         <div class="banner">
           <h2>Eğitim Düzenleme Paneli</h2>
           <p>Her eğitim için video, quiz ve sertifika içerikleri ayrı yönetilir.</p>
+          <div class="admin-toolbar">
+            <button class="cta" id="add-training">Yeni Eğitim Ekle</button>
+            <button class="cta outline" id="save-all">Tümünü Kaydet</button>
+          </div>
         </div>
-        <div class="admin-grid">
-          <article class="admin-column">
-            <div class="admin-header">
-              <h3>PPRC Boru ve Ek Parçaları</h3>
-              <span>Ürünler</span>
-            </div>
-            <div class="admin-section">
-              <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: PPRC Boru Montajı" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
-              <button class="cta">Sertifika Oluştur</button>
-            </div>
-          </article>
-          <article class="admin-column">
-            <div class="admin-header">
-              <h3>Yerden Isıtma Sistemleri</h3>
-              <span>Ürünler</span>
-            </div>
-            <div class="admin-section">
-              <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: Montaj Adımları" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
-              <button class="cta">Sertifika Oluştur</button>
-            </div>
-          </article>
-          <article class="admin-column">
-            <div class="admin-header">
-              <h3>PVC Boru ve Ek Parçaları</h3>
-              <span>Ürünler</span>
-            </div>
-            <div class="admin-section">
-              <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: Kesim ve Birleştirme" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
-              <button class="cta">Sertifika Oluştur</button>
-            </div>
-          </article>
-          <article class="admin-column">
-            <div class="admin-header">
-              <h3>3K Sessiz Boru</h3>
-              <span>Diğer</span>
-            </div>
-            <div class="admin-section">
-              <h4>Video Yönetimi</h4>
-              <label>Video Başlığı<input type="text" placeholder="Örn: Sessiz Boru Testi" /></label>
-              <label>Video Dosyası<input type="file" /></label>
-              <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
-              <div class="admin-actions">
-                <button class="cta">Video Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Quiz Soruları</h4>
-              <label>Soru<input type="text" placeholder="Soru metni" /></label>
-              <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
-              <div class="admin-actions">
-                <button class="cta">Soru Ekle</button>
-                <button class="cta outline">Sil</button>
-              </div>
-            </div>
-            <div class="admin-section">
-              <h4>Sertifika Oluştur</h4>
-              <label>Sertifika Şablonu<input type="file" /></label>
-              <button class="cta">Sertifika Oluştur</button>
-            </div>
-          </article>
-        </div>
+        <div class="admin-grid"></div>
+        <p class="admin-empty">Henüz eğitim eklenmedi.</p>
       </section>
     </main>
   </div>

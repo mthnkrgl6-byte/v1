@@ -1,7 +1,7 @@
 const tabs = document.querySelectorAll(".tab");
 const navItems = document.querySelectorAll(".nav-item");
 const panels = document.querySelectorAll(".tab-panel");
-const joinButtons = document.querySelectorAll(".join-training");
+const cardsContainer = document.querySelector(".cards");
 const trainingList = document.getElementById("training-list");
 const trainingDetail = document.getElementById("training-detail");
 const trainingTitle = document.getElementById("training-title");
@@ -12,6 +12,16 @@ const progressLabel = document.getElementById("progress-label");
 const progressFill = document.getElementById("progress-fill");
 const quizTitle = document.getElementById("quiz-title");
 const backToDetail = document.getElementById("back-to-detail");
+const adminGrid = document.querySelector(".admin-grid");
+const addTrainingButton = document.getElementById("add-training");
+const saveAllButton = document.getElementById("save-all");
+const toast = document.createElement("div");
+toast.className = "toast";
+toast.textContent = "Değişiklikler kaydedildi.";
+document.body.appendChild(toast);
+
+const trainings = [];
+let trainingCounter = 0;
 
 const activateTab = (name) => {
   tabs.forEach((tab) => {
@@ -29,29 +39,160 @@ const activateTab = (name) => {
   }
 };
 
+const attachJoinHandlers = () => {
+  document.querySelectorAll(".join-training").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (trainingTitle) {
+        trainingTitle.textContent = button.dataset.title || "Eğitim Detayı";
+      }
+      if (quizTitle) {
+        quizTitle.textContent = `Quiz : ${button.dataset.title || "Eğitim Detayı"}`;
+      }
+      trainingList?.classList.remove("is-active");
+      trainingDetail?.classList.add("is-active");
+      quizStart?.setAttribute("disabled", "disabled");
+      if (progressLabel) {
+        progressLabel.textContent = "İlerleme: %0";
+      }
+      if (progressFill) {
+        progressFill.style.width = "0%";
+      }
+    });
+  });
+};
+
+const renderTrainingCards = () => {
+  if (!cardsContainer) return;
+  const listEmpty = trainingList?.querySelector(".admin-empty");
+  cardsContainer.innerHTML = trainings
+    .map((training) => {
+      const statusClass = training.statusClass ? `status ${training.statusClass}` : "status";
+      return `
+        <article class="card" data-training-id="${training.id}">
+          <div class="card-image">
+            <img src="${training.image}" alt="${training.title}" />
+          </div>
+          <h3>${training.title}</h3>
+          <p>${training.subtitle}</p>
+          <button class="cta join-training" data-title="${training.detailTitle}">Eğitime Katıl</button>
+          <div class="progress">
+            <span>${training.progress}</span>
+            <span class="${statusClass}">${training.status}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+  if (listEmpty) {
+    listEmpty.style.display = trainings.length ? "none" : "block";
+  }
+  attachJoinHandlers();
+};
+
+const renderAdminColumns = () => {
+  if (!adminGrid) return;
+  const emptyState = adminGrid.nextElementSibling;
+  adminGrid.innerHTML = trainings
+    .map((training) => createTrainingColumn(training))
+    .join("");
+  adminGrid.querySelectorAll(".admin-column").forEach((column) => {
+    const trainingId = column.dataset.trainingId;
+    const training = trainings.find((item) => item.id === trainingId);
+    if (!training) return;
+    const videoList = column.querySelector(".video-list");
+    const quizList = column.querySelector(".quiz-list");
+    if (videoList && training.videos.length) {
+      videoList.innerHTML = "";
+      training.videos.forEach((video) => {
+        videoList.appendChild(createAdminItem(video.title, `${video.file} · ${video.note}`));
+      });
+    }
+    if (quizList && training.quizzes.length) {
+      quizList.innerHTML = "";
+      training.quizzes.forEach((quiz) => {
+        quizList.appendChild(createAdminItem(quiz.question, `Doğru: ${quiz.answer}`));
+      });
+    }
+  });
+  if (emptyState && emptyState.classList.contains("admin-empty")) {
+    emptyState.style.display = trainings.length ? "none" : "block";
+  }
+};
+
+const initializeTrainings = () => {
+  const stored = localStorage.getItem("kalde-trainings");
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      parsed.forEach((training) => {
+        trainingCounter = Math.max(trainingCounter, Number(training.id?.split("-")[1]) || 0);
+        trainings.push({
+          ...training,
+          videos: training.videos || [],
+          quizzes: training.quizzes || [],
+        });
+      });
+    } catch (error) {
+      localStorage.removeItem("kalde-trainings");
+    }
+  }
+  renderTrainingCards();
+  renderAdminColumns();
+};
+
 [...tabs, ...navItems].forEach((tab) => {
   tab.addEventListener("click", () => activateTab(tab.dataset.tab));
 });
 
-joinButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    if (trainingTitle) {
-      trainingTitle.textContent = button.dataset.title || "Eğitim Detayı";
-    }
-    if (quizTitle) {
-      quizTitle.textContent = `Quiz : ${button.dataset.title || "Eğitim Detayı"}`;
-    }
-    trainingList?.classList.remove("is-active");
-    trainingDetail?.classList.add("is-active");
-    quizStart?.setAttribute("disabled", "disabled");
-    if (progressLabel) {
-      progressLabel.textContent = "İlerleme: %0";
-    }
-    if (progressFill) {
-      progressFill.style.width = "0%";
-    }
+attachJoinHandlers();
+
+initializeTrainings();
+
+const updateTrainingTitle = (column) => {
+  const trainingId = column.dataset.trainingId;
+  const headerTitle = column.querySelector(".admin-header h3");
+  const headerCategory = column.querySelector(".admin-header span");
+  const previewImage = column.querySelector(".preview-image");
+  const training = trainings.find((item) => item.id === trainingId);
+  if (training && headerTitle) {
+    training.title = headerTitle.textContent.trim();
+    training.detailTitle = `${training.title} Teknik Bilgiler`;
+  }
+  if (training && headerCategory) {
+    training.subtitle = headerCategory.textContent.trim() || training.subtitle;
+  }
+  if (training && previewImage) {
+    training.image = previewImage.src;
+  }
+};
+
+const addTraining = () => {
+  trainingCounter += 1;
+  const id = `training-${trainingCounter}`;
+  trainings.push({
+    id,
+    title: "Yeni Eğitim",
+    subtitle: "Diğer",
+    progress: "İlerleme: %0",
+    status: "Başarı",
+    statusClass: "",
+    image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80",
+    detailTitle: "Yeni Eğitim Teknik Bilgiler",
+    videos: [],
+    quizzes: [],
   });
-});
+  renderTrainingCards();
+  renderAdminColumns();
+};
+
+const removeTraining = (trainingId) => {
+  const index = trainings.findIndex((item) => item.id === trainingId);
+  if (index >= 0) {
+    trainings.splice(index, 1);
+  }
+  renderTrainingCards();
+  renderAdminColumns();
+};
 
 backToList?.addEventListener("click", () => {
   trainingDetail?.classList.remove("is-active");
@@ -81,3 +222,197 @@ backToDetail?.addEventListener("click", () => {
 });
 
 activateTab("all");
+
+const showToast = (message) => {
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  setTimeout(() => toast.classList.remove("is-visible"), 2000);
+};
+
+const createAdminItem = (title, subtitle) => {
+  const item = document.createElement("div");
+  item.className = "admin-item";
+  item.innerHTML = `
+    <div>
+      <strong>${title}</strong>
+      <p>${subtitle}</p>
+    </div>
+    <button type="button">Sil</button>
+  `;
+  item.querySelector("button").addEventListener("click", () => item.remove());
+  return item;
+};
+
+const createTrainingColumn = (training) => `
+  <article class="admin-column" data-training-id="${training.id}">
+    <div class="admin-header">
+      <h3 contenteditable="true">${training.title}</h3>
+      <span contenteditable="true">${training.subtitle}</span>
+    </div>
+    <div class="admin-section">
+      <h4>Eğitim Önizleme</h4>
+      <img class="preview-image" src="${training.image}" alt="Eğitim önizleme" />
+      <label>Önizleme Görsel URL<input type="text" class="preview-url" placeholder="https://..." value="${training.image}" /></label>
+      <label>Önizleme Görseli Yükle<input type="file" class="preview-input" accept="image/*" /></label>
+    </div>
+    <div class="admin-section">
+      <h4>Video Yönetimi</h4>
+      <div class="admin-form video-form">
+        <label>Video Başlığı<input type="text" placeholder="Örn: Eğitim Başlığı" /></label>
+        <label>Video Dosyası<input type="file" /></label>
+        <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
+        <div class="admin-actions">
+          <button class="cta add-video">Video Ekle</button>
+          <button class="cta outline">Sil</button>
+        </div>
+      </div>
+      <div class="admin-list video-list">
+        <p class="admin-empty">Henüz video eklenmedi.</p>
+      </div>
+    </div>
+    <div class="admin-section">
+      <h4>Quiz Soruları</h4>
+      <div class="admin-form quiz-form">
+        <label>Soru<input type="text" placeholder="Soru metni" /></label>
+        <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
+        <div class="admin-actions">
+          <button class="cta add-quiz">Soru Ekle</button>
+          <button class="cta outline">Sil</button>
+        </div>
+      </div>
+      <div class="admin-list quiz-list">
+        <p class="admin-empty">Henüz soru eklenmedi.</p>
+      </div>
+    </div>
+    <div class="admin-section">
+      <h4>Sertifika Oluştur</h4>
+      <label>Sertifika Şablonu<input type="file" class="certificate-input" /></label>
+      <span class="certificate-name">Şablon seçilmedi</span>
+      <button class="cta">Sertifika Oluştur</button>
+    </div>
+    <div class="admin-footer">
+      <button class="cta outline">Eğitimi Sil</button>
+      <button class="cta save-training">Kaydet</button>
+    </div>
+  </article>
+`;
+
+const handleVideoAdd = (column) => {
+  const titleInput = column.querySelector(".video-form input[type='text']");
+  const noteInput = column.querySelector(".video-form textarea");
+  const fileInput = column.querySelector(".video-form input[type='file']");
+  const title = titleInput?.value.trim() || "Başlıksız Video";
+  const note = noteInput?.value.trim() || "Not eklenmedi";
+  const fileName = fileInput?.files?.[0]?.name || "Dosya seçilmedi";
+  const list = column.querySelector(".video-list");
+  if (list) {
+    list.querySelector(".admin-empty")?.remove();
+    list.appendChild(createAdminItem(title, `${fileName} · ${note}`));
+  }
+  const training = trainings.find((item) => item.id === column.dataset.trainingId);
+  if (training) {
+    training.videos.push({ title, note, file: fileName });
+  }
+  if (titleInput) titleInput.value = "";
+  if (noteInput) noteInput.value = "";
+  if (fileInput) fileInput.value = "";
+};
+
+const handleQuizAdd = (column) => {
+  const quizInputs = column.querySelectorAll(".quiz-form input[type='text']");
+  const questionInput = quizInputs[0];
+  const answerInput = quizInputs[1];
+  const question = questionInput?.value.trim() || "Soru girilmedi";
+  const answer = answerInput?.value.trim() || "Cevap girilmedi";
+  const list = column.querySelector(".quiz-list");
+  if (list) {
+    list.querySelector(".admin-empty")?.remove();
+    list.appendChild(createAdminItem(question, `Doğru: ${answer}`));
+  }
+  const training = trainings.find((item) => item.id === column.dataset.trainingId);
+  if (training) {
+    training.quizzes.push({ question, answer });
+  }
+  if (questionInput) questionInput.value = "";
+  if (answerInput) answerInput.value = "";
+};
+
+addTrainingButton?.addEventListener("click", () => {
+  addTraining();
+  showToast("Yeni eğitim eklendi.");
+});
+
+saveAllButton?.addEventListener("click", () => {
+  localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+  showToast("Tüm eğitimler kaydedildi.");
+});
+
+adminGrid?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+  const column = target.closest(".admin-column");
+  if (!column) return;
+  if (target.classList.contains("add-video")) {
+    event.preventDefault();
+    handleVideoAdd(column);
+  }
+  if (target.classList.contains("add-quiz")) {
+    event.preventDefault();
+    handleQuizAdd(column);
+  }
+  if (target.classList.contains("save-training")) {
+    event.preventDefault();
+    updateTrainingTitle(column);
+    localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+    renderTrainingCards();
+    showToast("Eğitim kaydedildi.");
+  }
+  if (target.textContent === "Eğitimi Sil") {
+    const trainingId = column.dataset.trainingId;
+    column.remove();
+    if (trainingId) {
+      removeTraining(trainingId);
+      localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+    }
+    showToast("Eğitim silindi.");
+  }
+});
+
+adminGrid?.addEventListener("change", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  if (target.classList.contains("certificate-input")) {
+    const column = target.closest(".admin-column");
+    const name = target.files?.[0]?.name || "Şablon seçilmedi";
+    const label = column?.querySelector(".certificate-name");
+    if (label) {
+      label.textContent = name;
+    }
+  }
+  if (target.classList.contains("preview-input")) {
+    const column = target.closest(".admin-column");
+    const file = target.files?.[0];
+    const preview = column?.querySelector(".preview-image");
+    if (file && preview) {
+      preview.src = URL.createObjectURL(file);
+      updateTrainingTitle(column);
+      renderTrainingCards();
+      localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+    }
+  }
+});
+
+adminGrid?.addEventListener("input", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  if (target.classList.contains("preview-url")) {
+    const column = target.closest(".admin-column");
+    const preview = column?.querySelector(".preview-image");
+    if (preview && target.value.trim()) {
+      preview.src = target.value.trim();
+      updateTrainingTitle(column);
+      renderTrainingCards();
+      localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+    }
+  }
+});
