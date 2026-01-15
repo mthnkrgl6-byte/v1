@@ -29,6 +29,10 @@ const trainings = [];
 let trainingCounter = 0;
 let activeTrainingId = null;
 
+const persistTrainings = () => {
+  localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+};
+
 const activateTab = (name) => {
   tabs.forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.tab === name);
@@ -264,6 +268,7 @@ const addTraining = () => {
   });
   renderTrainingCards();
   renderAdminColumns();
+  persistTrainings();
 };
 
 const removeTraining = (trainingId) => {
@@ -273,6 +278,7 @@ const removeTraining = (trainingId) => {
   }
   renderTrainingCards();
   renderAdminColumns();
+  persistTrainings();
 };
 
 backToList?.addEventListener("click", () => {
@@ -373,7 +379,7 @@ const createTrainingColumn = (training) => `
       <button class="cta">Sertifika Oluştur</button>
     </div>
     <div class="admin-footer">
-      <button class="cta outline">Eğitimi Sil</button>
+      <button class="cta outline delete-training">Eğitimi Sil</button>
       <button class="cta save-training">Kaydet</button>
     </div>
   </article>
@@ -399,6 +405,7 @@ const handleVideoAdd = (column) => {
     if (training.id === activeTrainingId) {
       renderTrainingDetail(training);
     }
+    persistTrainings();
   }
   if (titleInput) titleInput.value = "";
   if (urlInput) urlInput.value = "";
@@ -423,6 +430,7 @@ const handleQuizAdd = (column) => {
     if (training.id === activeTrainingId) {
       renderTrainingDetail(training);
     }
+    persistTrainings();
   }
   if (questionInput) questionInput.value = "";
   if (answerInput) answerInput.value = "";
@@ -434,7 +442,7 @@ addTrainingButton?.addEventListener("click", () => {
 });
 
 saveAllButton?.addEventListener("click", () => {
-  localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+  persistTrainings();
   showToast("Tüm eğitimler kaydedildi.");
 });
 
@@ -454,16 +462,15 @@ adminGrid?.addEventListener("click", (event) => {
   if (target.classList.contains("save-training")) {
     event.preventDefault();
     updateTrainingTitle(column);
-    localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+    persistTrainings();
     renderTrainingCards();
     showToast("Eğitim kaydedildi.");
   }
-  if (target.textContent === "Eğitimi Sil") {
+  if (target.classList.contains("delete-training")) {
     const trainingId = column.dataset.trainingId;
     column.remove();
     if (trainingId) {
       removeTraining(trainingId);
-      localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
     }
     showToast("Eğitim silindi.");
   }
@@ -488,7 +495,7 @@ adminGrid?.addEventListener("change", (event) => {
       preview.src = URL.createObjectURL(file);
       updateTrainingTitle(column);
       renderTrainingCards();
-      localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+      persistTrainings();
     }
   }
 });
@@ -503,7 +510,7 @@ adminGrid?.addEventListener("input", (event) => {
       preview.src = target.value.trim();
       updateTrainingTitle(column);
       renderTrainingCards();
-      localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+      persistTrainings();
     }
   }
 });
