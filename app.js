@@ -15,6 +15,8 @@ const backToDetail = document.getElementById("back-to-detail");
 const detailVideos = document.getElementById("detail-videos");
 const detailQuizzes = document.getElementById("detail-quizzes");
 const quizQuestions = document.getElementById("quiz-questions");
+const trainingVideo = document.getElementById("training-video");
+const videoPlaceholder = document.getElementById("video-placeholder");
 const adminGrid = document.querySelector(".admin-grid");
 const addTrainingButton = document.getElementById("add-training");
 const saveAllButton = document.getElementById("save-all");
@@ -43,18 +45,41 @@ const activateTab = (name) => {
   }
 };
 
+const setActiveVideo = (video) => {
+  if (!trainingVideo || !videoPlaceholder) return;
+  if (video?.url) {
+    trainingVideo.src = video.url;
+    trainingVideo.style.display = "block";
+    videoPlaceholder.style.display = "none";
+  } else {
+    trainingVideo.removeAttribute("src");
+    trainingVideo.style.display = "none";
+    videoPlaceholder.style.display = "flex";
+  }
+};
+
 const renderTrainingDetail = (training) => {
   if (detailVideos) {
     detailVideos.innerHTML = "";
     if (!training.videos.length) {
       detailVideos.innerHTML = '<p class="admin-empty">Henüz video eklenmedi.</p>';
+      setActiveVideo(null);
     } else {
       training.videos.forEach((video) => {
         const item = document.createElement("div");
         item.className = "detail-item";
-        item.innerHTML = `<span>${video.title}</span><span>${video.note}</span>`;
+        item.innerHTML = `
+          <span>${video.title}</span>
+          <button type="button" class="play-video">Oynat</button>
+        `;
+        item.querySelector(".play-video").addEventListener("click", (event) => {
+          event.stopPropagation();
+          setActiveVideo(video);
+        });
+        item.addEventListener("click", () => setActiveVideo(video));
         detailVideos.appendChild(item);
       });
+      setActiveVideo(training.videos[0]);
     }
   }
   if (detailQuizzes) {
@@ -315,6 +340,7 @@ const createTrainingColumn = (training) => `
       <h4>Video Yönetimi</h4>
       <div class="admin-form video-form">
         <label>Video Başlığı<input type="text" placeholder="Örn: Eğitim Başlığı" /></label>
+        <label>Video URL<input type="text" class="video-url" placeholder="https://..." /></label>
         <label>Video Dosyası<input type="file" /></label>
         <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
         <div class="admin-actions">
@@ -355,9 +381,11 @@ const createTrainingColumn = (training) => `
 
 const handleVideoAdd = (column) => {
   const titleInput = column.querySelector(".video-form input[type='text']");
+  const urlInput = column.querySelector(".video-form .video-url");
   const noteInput = column.querySelector(".video-form textarea");
   const fileInput = column.querySelector(".video-form input[type='file']");
   const title = titleInput?.value.trim() || "Başlıksız Video";
+  const url = urlInput?.value.trim() || "";
   const note = noteInput?.value.trim() || "Not eklenmedi";
   const fileName = fileInput?.files?.[0]?.name || "Dosya seçilmedi";
   const list = column.querySelector(".video-list");
@@ -367,12 +395,13 @@ const handleVideoAdd = (column) => {
   }
   const training = trainings.find((item) => item.id === column.dataset.trainingId);
   if (training) {
-    training.videos.push({ title, note, file: fileName });
+    training.videos.push({ title, note, file: fileName, url });
     if (training.id === activeTrainingId) {
       renderTrainingDetail(training);
     }
   }
   if (titleInput) titleInput.value = "";
+  if (urlInput) urlInput.value = "";
   if (noteInput) noteInput.value = "";
   if (fileInput) fileInput.value = "";
 };
