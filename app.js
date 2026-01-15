@@ -13,7 +13,6 @@ const progressFill = document.getElementById("progress-fill");
 const quizTitle = document.getElementById("quiz-title");
 const backToDetail = document.getElementById("back-to-detail");
 const detailVideos = document.getElementById("detail-videos");
-const detailQuizzes = document.getElementById("detail-quizzes");
 const quizQuestions = document.getElementById("quiz-questions");
 const trainingVideo = document.getElementById("training-video");
 const videoPlaceholder = document.getElementById("video-placeholder");
@@ -96,19 +95,6 @@ const renderTrainingDetail = (training) => {
       setActiveVideo(training.videos[0]);
     }
   }
-  if (detailQuizzes) {
-    detailQuizzes.innerHTML = "";
-    if (!training.quizzes.length) {
-      detailQuizzes.innerHTML = '<p class="admin-empty">Henüz soru eklenmedi.</p>';
-    } else {
-      training.quizzes.forEach((quiz) => {
-        const item = document.createElement("div");
-        item.className = "detail-item";
-        item.innerHTML = `<span>${quiz.question}</span><span>${quiz.answer}</span>`;
-        detailQuizzes.appendChild(item);
-      });
-    }
-  }
   if (quizQuestions) {
     quizQuestions.innerHTML = "";
     if (!training.quizzes.length) {
@@ -120,7 +106,12 @@ const renderTrainingDetail = (training) => {
         item.innerHTML = `
           <h3>${index + 1}. Soru : ${quiz.question}</h3>
           <div class="quiz-options">
-            <label><input type="radio" name="q${index}" /> ${quiz.answer}</label>
+            ${quiz.options
+              .map(
+                (option, optionIndex) =>
+                  `<label><input type="radio" name="q${index}" /> ${String.fromCharCode(65 + optionIndex)}. ${option}</label>`
+              )
+              .join("")}
           </div>
         `;
         quizQuestions.appendChild(item);
@@ -341,7 +332,6 @@ const createTrainingColumn = (training) => `
       <h4>Video Yönetimi</h4>
       <div class="admin-form video-form">
         <label>Video Başlığı<input type="text" placeholder="Örn: Eğitim Başlığı" /></label>
-        <label>Video URL<input type="text" class="video-url" placeholder="https://..." /></label>
         <label>Video Dosyası<input type="file" /></label>
         <label>Kısa Not<textarea placeholder="Eğitim notları"></textarea></label>
         <div class="admin-actions">
@@ -358,6 +348,9 @@ const createTrainingColumn = (training) => `
       <div class="admin-form quiz-form">
         <label>Soru<input type="text" placeholder="Soru metni" /></label>
         <label>Doğru Cevap<input type="text" placeholder="Doğru cevap" /></label>
+        <label>Yanlış Seçenek 1<input type="text" placeholder="Yanlış seçenek" /></label>
+        <label>Yanlış Seçenek 2<input type="text" placeholder="Yanlış seçenek" /></label>
+        <label>Yanlış Seçenek 3<input type="text" placeholder="Yanlış seçenek" /></label>
         <div class="admin-actions">
           <button class="cta add-quiz">Soru Ekle</button>
           <button class="cta outline">Sil</button>
@@ -382,13 +375,13 @@ const createTrainingColumn = (training) => `
 
 const handleVideoAdd = (column) => {
   const titleInput = column.querySelector(".video-form input[type='text']");
-  const urlInput = column.querySelector(".video-form .video-url");
   const noteInput = column.querySelector(".video-form textarea");
   const fileInput = column.querySelector(".video-form input[type='file']");
   const title = titleInput?.value.trim() || "Başlıksız Video";
-  const url = urlInput?.value.trim() || "";
   const note = noteInput?.value.trim() || "Not eklenmedi";
-  const fileName = fileInput?.files?.[0]?.name || "Dosya seçilmedi";
+  const file = fileInput?.files?.[0];
+  const fileName = file?.name || "Dosya seçilmedi";
+  const url = file ? URL.createObjectURL(file) : "";
   const list = column.querySelector(".video-list");
   if (list) {
     list.querySelector(".admin-empty")?.remove();
@@ -403,7 +396,6 @@ const handleVideoAdd = (column) => {
     persistTrainings();
   }
   if (titleInput) titleInput.value = "";
-  if (urlInput) urlInput.value = "";
   if (noteInput) noteInput.value = "";
   if (fileInput) fileInput.value = "";
 };
@@ -412,8 +404,14 @@ const handleQuizAdd = (column) => {
   const quizInputs = column.querySelectorAll(".quiz-form input[type='text']");
   const questionInput = quizInputs[0];
   const answerInput = quizInputs[1];
+  const wrongOneInput = quizInputs[2];
+  const wrongTwoInput = quizInputs[3];
+  const wrongThreeInput = quizInputs[4];
   const question = questionInput?.value.trim() || "Soru girilmedi";
   const answer = answerInput?.value.trim() || "Cevap girilmedi";
+  const wrongOne = wrongOneInput?.value.trim() || "Yanlış seçenek";
+  const wrongTwo = wrongTwoInput?.value.trim() || "Yanlış seçenek";
+  const wrongThree = wrongThreeInput?.value.trim() || "Yanlış seçenek";
   const list = column.querySelector(".quiz-list");
   if (list) {
     list.querySelector(".admin-empty")?.remove();
@@ -421,7 +419,11 @@ const handleQuizAdd = (column) => {
   }
   const training = trainings.find((item) => item.id === column.dataset.trainingId);
   if (training) {
-    training.quizzes.push({ question, answer });
+    training.quizzes.push({
+      question,
+      answer,
+      options: [answer, wrongOne, wrongTwo, wrongThree],
+    });
     if (training.id === activeTrainingId) {
       renderTrainingDetail(training);
     }
@@ -429,6 +431,9 @@ const handleQuizAdd = (column) => {
   }
   if (questionInput) questionInput.value = "";
   if (answerInput) answerInput.value = "";
+  if (wrongOneInput) wrongOneInput.value = "";
+  if (wrongTwoInput) wrongTwoInput.value = "";
+  if (wrongThreeInput) wrongThreeInput.value = "";
 };
 
 addTrainingButton?.addEventListener("click", () => {
