@@ -12,6 +12,9 @@ const progressLabel = document.getElementById("progress-label");
 const progressFill = document.getElementById("progress-fill");
 const quizTitle = document.getElementById("quiz-title");
 const backToDetail = document.getElementById("back-to-detail");
+const detailVideos = document.getElementById("detail-videos");
+const detailQuizzes = document.getElementById("detail-quizzes");
+const quizQuestions = document.getElementById("quiz-questions");
 const adminGrid = document.querySelector(".admin-grid");
 const addTrainingButton = document.getElementById("add-training");
 const saveAllButton = document.getElementById("save-all");
@@ -22,6 +25,7 @@ document.body.appendChild(toast);
 
 const trainings = [];
 let trainingCounter = 0;
+let activeTrainingId = null;
 
 const activateTab = (name) => {
   tabs.forEach((tab) => {
@@ -39,14 +43,66 @@ const activateTab = (name) => {
   }
 };
 
+const renderTrainingDetail = (training) => {
+  if (detailVideos) {
+    detailVideos.innerHTML = "";
+    if (!training.videos.length) {
+      detailVideos.innerHTML = '<p class="admin-empty">Henüz video eklenmedi.</p>';
+    } else {
+      training.videos.forEach((video) => {
+        const item = document.createElement("div");
+        item.className = "detail-item";
+        item.innerHTML = `<span>${video.title}</span><span>${video.note}</span>`;
+        detailVideos.appendChild(item);
+      });
+    }
+  }
+  if (detailQuizzes) {
+    detailQuizzes.innerHTML = "";
+    if (!training.quizzes.length) {
+      detailQuizzes.innerHTML = '<p class="admin-empty">Henüz soru eklenmedi.</p>';
+    } else {
+      training.quizzes.forEach((quiz) => {
+        const item = document.createElement("div");
+        item.className = "detail-item";
+        item.innerHTML = `<span>${quiz.question}</span><span>${quiz.answer}</span>`;
+        detailQuizzes.appendChild(item);
+      });
+    }
+  }
+  if (quizQuestions) {
+    quizQuestions.innerHTML = "";
+    if (!training.quizzes.length) {
+      quizQuestions.innerHTML = '<p class="admin-empty">Henüz soru eklenmedi.</p>';
+    } else {
+      training.quizzes.forEach((quiz, index) => {
+        const item = document.createElement("div");
+        item.className = "quiz-question";
+        item.innerHTML = `
+          <h3>${index + 1}. Soru : ${quiz.question}</h3>
+          <div class="quiz-options">
+            <label><input type="radio" name="q${index}" /> ${quiz.answer}</label>
+          </div>
+        `;
+        quizQuestions.appendChild(item);
+      });
+    }
+  }
+};
+
 const attachJoinHandlers = () => {
   document.querySelectorAll(".join-training").forEach((button) => {
     button.addEventListener("click", () => {
+      activeTrainingId = button.closest(".card")?.dataset.trainingId || null;
+      const training = trainings.find((item) => item.id === activeTrainingId);
       if (trainingTitle) {
-        trainingTitle.textContent = button.dataset.title || "Eğitim Detayı";
+        trainingTitle.textContent = training?.detailTitle || button.dataset.title || "Eğitim Detayı";
       }
       if (quizTitle) {
-        quizTitle.textContent = `Quiz : ${button.dataset.title || "Eğitim Detayı"}`;
+        quizTitle.textContent = `Quiz : ${training?.detailTitle || button.dataset.title || "Eğitim Detayı"}`;
+      }
+      if (training) {
+        renderTrainingDetail(training);
       }
       trainingList?.classList.remove("is-active");
       trainingDetail?.classList.add("is-active");
@@ -312,6 +368,9 @@ const handleVideoAdd = (column) => {
   const training = trainings.find((item) => item.id === column.dataset.trainingId);
   if (training) {
     training.videos.push({ title, note, file: fileName });
+    if (training.id === activeTrainingId) {
+      renderTrainingDetail(training);
+    }
   }
   if (titleInput) titleInput.value = "";
   if (noteInput) noteInput.value = "";
@@ -332,6 +391,9 @@ const handleQuizAdd = (column) => {
   const training = trainings.find((item) => item.id === column.dataset.trainingId);
   if (training) {
     training.quizzes.push({ question, answer });
+    if (training.id === activeTrainingId) {
+      renderTrainingDetail(training);
+    }
   }
   if (questionInput) questionInput.value = "";
   if (answerInput) answerInput.value = "";
