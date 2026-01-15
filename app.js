@@ -20,6 +20,7 @@ const videoPlaceholder = document.getElementById("video-placeholder");
 const adminGrid = document.querySelector(".admin-grid");
 const addTrainingButton = document.getElementById("add-training");
 const saveAllButton = document.getElementById("save-all");
+const resetTrainingsButton = document.getElementById("reset-trainings");
 const toast = document.createElement("div");
 toast.className = "toast";
 toast.textContent = "Değişiklikler kaydedildi.";
@@ -31,6 +32,15 @@ let activeTrainingId = null;
 
 const persistTrainings = () => {
   localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
+};
+
+const resetTrainings = () => {
+  trainings.length = 0;
+  trainingCounter = 0;
+  activeTrainingId = null;
+  localStorage.removeItem("kalde-trainings");
+  renderTrainingCards();
+  renderAdminColumns();
 };
 
 const activateTab = (name) => {
@@ -205,22 +215,7 @@ const renderAdminColumns = () => {
 };
 
 const initializeTrainings = () => {
-  const stored = localStorage.getItem("kalde-trainings");
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      parsed.forEach((training) => {
-        trainingCounter = Math.max(trainingCounter, Number(training.id?.split("-")[1]) || 0);
-        trainings.push({
-          ...training,
-          videos: training.videos || [],
-          quizzes: training.quizzes || [],
-        });
-      });
-    } catch (error) {
-      localStorage.removeItem("kalde-trainings");
-    }
-  }
+  localStorage.removeItem("kalde-trainings");
   renderTrainingCards();
   renderAdminColumns();
 };
@@ -444,6 +439,11 @@ addTrainingButton?.addEventListener("click", () => {
 saveAllButton?.addEventListener("click", () => {
   persistTrainings();
   showToast("Tüm eğitimler kaydedildi.");
+});
+
+resetTrainingsButton?.addEventListener("click", () => {
+  resetTrainings();
+  showToast("Tüm eğitimler sıfırlandı.");
 });
 
 adminGrid?.addEventListener("click", (event) => {
