@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalde Eğitim Platformu</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">kalde</div>
+        <span>Eğitim Platformu</span>
+      </div>
+      <nav class="nav">
+        <div class="nav-section">
+          <p class="nav-title">TEMEL İŞLEMLER</p>
+          <button class="nav-item is-active" data-tab="all">Tüm Eğitimler</button>
+          <button class="nav-item" data-tab="in-progress">Devam Eden Eğitimler</button>
+          <button class="nav-item" data-tab="completed">Tamamlanan Eğitimler</button>
+          <button class="nav-item" data-tab="certificates">Sertifikalar</button>
+        </div>
+        <div class="nav-section">
+          <p class="nav-title">YÖNETİCİ PANELİ</p>
+          <button class="nav-item" data-tab="admin">Eğitim Düzenleme</button>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div>
+          <h1>Kalde Eğitim Merkezi</h1>
+          <p>Satış görüşmeleri ve teknik eğitimler</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="pill">Online Toplantı</button>
+          <button class="pill secondary">Proje Satış Temsilcisi</button>
+          <div class="profile">
+            <span>Metahan Kargılı</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="tabs">
+        <div class="tab active" data-tab="all">Tüm Eğitimler</div>
+        <div class="tab" data-tab="in-progress">Devam Eden</div>
+        <div class="tab" data-tab="completed">Tamamlanan</div>
+        <div class="tab" data-tab="certificates">Sertifikalar</div>
+      </section>
+
+      <section class="filters">
+        <div class="category">
+          <span>Kategori</span>
+          <select>
+            <option>Tüm Videolar</option>
+            <option>Ürünler</option>
+            <option>Kişisel Gelişim</option>
+            <option>İş Sağlığı ve Güvenliği</option>
+            <option>Diğer</option>
+          </select>
+        </div>
+        <div class="chips">
+          <span class="chip is-active">Tüm Videolar</span>
+          <span class="chip">Ürünler</span>
+          <span class="chip">Kişisel Gelişim</span>
+          <span class="chip">İş Sağlığı ve Güvenliği</span>
+          <span class="chip">Diğer</span>
+        </div>
+      </section>
+
+      <section class="tab-panel is-active" id="tab-all">
+        <div class="training-list is-active" id="training-list">
+          <div class="cards"></div>
+          <p class="admin-empty">Henüz eğitim eklenmedi.</p>
+        </div>
+        <div class="training-detail" id="training-detail">
+          <div class="detail-header">
+            <button class="back-button" id="back-to-list">←</button>
+            <h2 id="training-title">PPRC Boru ve Ek Parçaları Teknik Bilgiler</h2>
+          </div>
+          <div class="detail-content">
+            <div class="video-wrapper">
+              <video id="training-video" controls></video>
+              <div class="video-placeholder" id="video-placeholder">
+                <p>Henüz video seçilmedi.</p>
+              </div>
+              <button class="nav-arrow left">‹</button>
+              <button class="nav-arrow right">›</button>
+              <button class="quiz-button" id="quiz-start" disabled>Quiz Başlat</button>
+              <button class="complete-button" id="video-complete">Videoyu Tamamla</button>
+            </div>
+            <aside class="detail-panel">
+              <div class="progress-block">
+                <span class="progress-label" id="progress-label">İlerleme: %0</span>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progress-fill"></div>
+                </div>
+              </div>
+              <div class="detail-list">
+                <h4>Yüklenen Videolar</h4>
+                <div class="detail-items" id="detail-videos">
+                  <p class="admin-empty">Henüz video eklenmedi.</p>
+                </div>
+              </div>
+              <div class="detail-list">
+                <h4>Quiz Soruları</h4>
+                <div class="detail-items" id="detail-quizzes">
+                  <p class="admin-empty">Henüz soru eklenmedi.</p>
+                </div>
+              </div>
+              <div class="quiz-status">
+                <h3>QUIZ BAŞARISI</h3>
+                <div class="quiz-row">
+                  <span class="icon success">✓</span>
+                  <span>0 Doğru</span>
+                </div>
+                <div class="quiz-row">
+                  <span class="icon error">✕</span>
+                  <span>0 Yanlış</span>
+                </div>
+              </div>
+              <button class="certificate-button">Sertifikanız</button>
+              <span class="certificate-status">Henüz Sertifika Alamadınız</span>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-quiz">
+        <div class="quiz-screen">
+          <div class="detail-header">
+            <button class="back-button" id="back-to-detail">←</button>
+            <h2 id="quiz-title">Quiz : PPRC Boru ve Ek Parçaları Teknik Bilgiler</h2>
+          </div>
+          <div class="quiz-body">
+            <div id="quiz-questions">
+              <p class="admin-empty">Henüz soru eklenmedi.</p>
+            </div>
+            <button class="quiz-submit">Sınavı Bitir</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-in-progress">
+        <div class="banner">
+          <h2>Devam Eden Eğitimler</h2>
+          <p>Bu bölümde devam eden eğitimler ve erişilebilir quizler listelenir.</p>
+        </div>
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>Video Tamamlama Durumu</h3>
+            <p>Videolar tamamlanmadan quiz açılmaz.</p>
+            <div class="lock">
+              <span>Quiz erişimi</span>
+              <span class="lock-badge">Kilitli</span>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Quiz Kuralı</h3>
+            <p>Toplam soru sayısının %50 + 1 doğru cevap gerektirir.</p>
+            <button class="cta outline">Soru Setini İncele</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-completed">
+        <div class="banner">
+          <h2>Tamamlanan Eğitimler</h2>
+          <p>Tamamlanan eğitimlerden sonra quiz sonuçları görüntülenir.</p>
+        </div>
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>Başarı Eşiği</h3>
+            <p>Quizde soruların yarısından fazlasını doğru yapan çalışanlar sertifika alır.</p>
+          </div>
+          <div class="panel">
+            <h3>Sertifika Ödülü</h3>
+            <p>Başarıya göre sertifika otomatik oluşur.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-certificates">
+        <div class="banner">
+          <h2>Sertifikalar</h2>
+          <p>Başarılı çalışanların sertifikaları burada listelenir.</p>
+        </div>
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>Son Sertifikalar</h3>
+            <ul>
+              <li>PPRC Boru ve Ek Parçaları</li>
+              <li>Yerden Isıtma Sistemleri</li>
+              <li>3K Sessiz Boru Teknik Bilgiler</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Sertifika Şablonu</h3>
+            <p>Yönetici sertifika şablonunu yükleyebilir ve düzenleyebilir.</p>
+            <button class="cta outline">Şablon Yükle</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-admin">
+        <div class="banner">
+          <h2>Eğitim Düzenleme Paneli</h2>
+          <p>Her eğitim için video, quiz ve sertifika içerikleri ayrı yönetilir.</p>
+          <div class="admin-toolbar">
+            <button class="cta" id="add-training">Yeni Eğitim Ekle</button>
+            <button class="cta outline" id="save-all">Tümünü Kaydet</button>
+            <button class="cta outline" id="reset-trainings">Sıfırla</button>
+          </div>
+        </div>
+        <div class="admin-grid"></div>
+        <p class="admin-empty">Henüz eğitim eklenmedi.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
