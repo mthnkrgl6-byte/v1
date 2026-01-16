@@ -445,6 +445,10 @@ body {
   gap: 24px;
 }
 
+.quiz-note {
+  font-size: 12px;
+  color: var(--muted);
+}
 .quiz-question h3 {
   font-size: 16px;
   margin-bottom: 12px;

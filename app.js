@@ -33,6 +33,36 @@ const persistTrainings = () => {
   localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
 };
 
+const seedTrainings = () => ([
+  {
+    id: "training-1",
+    title: "PPRC Boru ve Ek Parçaları Teknik Özellikleri ve Detaylar",
+    subtitle: "Ürünler",
+    progress: "İlerleme: %0",
+    status: "Başarı",
+    statusClass: "",
+    image: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=400&q=80",
+    detailTitle: "PPRC Boru ve Ek Parçaları Teknik Özellikleri ve Detaylar",
+    videos: [],
+    quizzes: [
+      {
+        question: "PPRC ham maddesinin açılımı nedir?",
+        answer: "Polipropilen Random Kopolimer",
+        options: [
+          "Polipropilen Random Kopolimer",
+          "Polipropilen Regular Kopolimer",
+          "Polipolimer Random Kopropilen",
+        ],
+      },
+      {
+        question: "1 boy boru kaç metredir?",
+        answer: "4 metre",
+        options: ["4 metre", "5 metre", "4,5 metre"],
+      },
+    ],
+  },
+]);
+
 const resetTrainings = () => {
   trainings.length = 0;
   trainingCounter = 0;
@@ -206,7 +236,30 @@ const renderAdminColumns = () => {
 };
 
 const initializeTrainings = () => {
-  localStorage.removeItem("kalde-trainings");
+  const stored = localStorage.getItem("kalde-trainings");
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      parsed.forEach((training) => {
+        trainingCounter = Math.max(trainingCounter, Number(training.id?.split("-")[1]) || 0);
+        trainings.push({
+          ...training,
+          videos: training.videos || [],
+          quizzes: (training.quizzes || []).map((quiz) => ({
+            ...quiz,
+            options: quiz.options || [quiz.answer],
+          })),
+        });
+      });
+    } catch (error) {
+      localStorage.removeItem("kalde-trainings");
+    }
+  }
+  if (!trainings.length) {
+    trainings.push(...seedTrainings());
+    trainingCounter = trainings.length;
+    persistTrainings();
+  }
   renderTrainingCards();
   renderAdminColumns();
 };
