@@ -15,6 +15,7 @@ const backToDetail = document.getElementById("back-to-detail");
 const detailVideos = document.getElementById("detail-videos");
 const quizQuestions = document.getElementById("quiz-questions");
 const trainingVideo = document.getElementById("training-video");
+const trainingEmbed = document.getElementById("training-embed");
 const videoPlaceholder = document.getElementById("video-placeholder");
 const adminGrid = document.querySelector(".admin-grid");
 const addTrainingButton = document.getElementById("add-training");
@@ -33,6 +34,21 @@ const persistTrainings = () => {
   localStorage.setItem("kalde-trainings", JSON.stringify(trainings));
 };
 
+const buildEmbedUrl = (url) => {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtu.be")) {
+      return `https://www.youtube.com/embed/${parsed.pathname.replace("/", "")}`;
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      return `https://www.youtube.com/embed/${parsed.searchParams.get("v") || ""}`;
+    }
+  } catch (error) {
+    return "";
+  }
+  return "";
+};
+
 const seedTrainings = () => ([
   {
     id: "training-1",
@@ -43,7 +59,14 @@ const seedTrainings = () => ([
     statusClass: "",
     image: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=400&q=80",
     detailTitle: "PPRC Boru ve Ek Parçaları Teknik Özellikleri ve Detaylar",
-    videos: [],
+    videos: [
+      {
+        title: "PPRC Teknik Eğitim Videosu",
+        note: "Ürün teknik detayları",
+        file: "nEb67CVibnw",
+        url: "https://youtu.be/nEb67CVibnw",
+      },
+    ],
     quizzes: [
       {
         question: "PPRC ham maddesinin açılımı nedir?",
@@ -89,14 +112,24 @@ const activateTab = (name) => {
 };
 
 const setActiveVideo = (video) => {
-  if (!trainingVideo || !videoPlaceholder) return;
+  if (!trainingVideo || !trainingEmbed || !videoPlaceholder) return;
   if (video?.url) {
-    trainingVideo.src = video.url;
-    trainingVideo.style.display = "block";
+    const embedUrl = buildEmbedUrl(video.url);
+    if (embedUrl) {
+      trainingEmbed.src = embedUrl;
+      trainingEmbed.style.display = "block";
+      trainingVideo.style.display = "none";
+    } else {
+      trainingVideo.src = video.url;
+      trainingVideo.style.display = "block";
+      trainingEmbed.style.display = "none";
+    }
     videoPlaceholder.style.display = "none";
   } else {
     trainingVideo.removeAttribute("src");
+    trainingEmbed.removeAttribute("src");
     trainingVideo.style.display = "none";
+    trainingEmbed.style.display = "none";
     videoPlaceholder.style.display = "flex";
   }
 };
